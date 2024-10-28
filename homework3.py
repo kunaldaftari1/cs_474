@@ -16,3 +16,11 @@ inner_result = Or(
 outer_formula_with_sub = ForAll(z, Implies(And(l1 < z, z < u1, l2 < z, z < u2), inner_result))
 final_qe_result = Tactic('qe')(outer_formula_with_sub)
 print("Quantifier elimination result for the outer formula with substitution:", final_qe_result)
+# File 3
+from z3 import *
+x, y = Reals('x y')
+inner_formula = And(2 * y > 3 * x, 4 * y < 8 * x + 10)
+formula = ForAll([x], Exists([y], inner_formula))
+qe = Tactic('qe')
+qe_result = qe(formula)
+print(qe_result)
