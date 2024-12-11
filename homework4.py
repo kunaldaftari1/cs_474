@@ -35,3 +35,48 @@ if solver.check() == sat:
     print(solver.model())
 else:
     print("The formulas are unsatisfiable.")
+
+
+# PROBLEM PART 2
+from z3 import *
+
+e, c, d = Int('e'), Int('c'), Int('d')
+x, y, z = Int('x'), Int('y'), Int('z')
+g = Function('g', IntSort(), IntSort())
+f = Function('f', IntSort(), IntSort(), IntSort())
+
+constraints = []
+
+for x in [e, c, d]:
+    for y in [e, c, d]:
+        for z in [e, c, d]:
+            constraints.append(f(f(x, y), z) == f(x, f(y, z)))
+
+for x in [e, c, d]:
+    constraints.append(f(x, e) == x)
+    constraints.append(f(e, x) == x)
+
+for x in [e, c, d]:
+    constraints.append(f(x, g(x)) == e)
+    constraints.append(f(g(x), x) == e)
+
+for x in [e, c, d]:
+    constraints.append(f(x, c) == x)
+    constraints.append(f(c, x) == x)
+    constraints.append(e != c)
+
+for x in [e, c, d]:
+    for y in [e, c, d]:
+        condition = And(f(x, y) == e, f(y, x) == e)
+
+        constraints.append(Implies(condition, y == g(x)))
+
+solver = Solver()
+solver.add(constraints)
+
+if solver.check() == sat:
+    print("The formulas are satisfiable.")
+    print("Example model:")
+    print(solver.model())
+else:
+    print("The formulas are unsatisfiable.")
